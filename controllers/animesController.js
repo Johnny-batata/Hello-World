@@ -13,4 +13,10 @@ const getAnimesCategorys = async (req, res) => {
   return res.status(200).json({ data: categorias });
 };
 
-module.exports = { getAnimesByStatus, getAnimesCategorys };
+const getAnimesByCategorys = async (req, res) => {
+  const { offset, categoryId, status } = req.params;
+  const animes = await animesService.getAnimesByCategorys(offset, categoryId, status);
+  return res.status(200).json({ data: animes.response, totalLength: animes.responseLength });
+};
+
+module.exports = { getAnimesByStatus, getAnimesCategorys, getAnimesByCategorys };
