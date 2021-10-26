@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const createUser = async (req, res) => {
   const { body } = req;
-console.log(body);
+// console.log(body);
 
 const user = await usersService
 .createUser(body);
@@ -17,7 +17,7 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   
   const user = await usersService.loginUser(email, password);
-  console.log(user);
+  // console.log(user);
   if (user.err) return res.status(422).json(user);
   const { _id, role } = user; 
   const segredo = process.env.SECRETPASSWORD;
@@ -33,4 +33,13 @@ const loginUser = async (req, res) => {
     res.status(200).json({ token });
 };
 
-module.exports = { createUser, loginUser };
+const getProfileInfo = async (req, res) => {
+  const { email } = req.body;
+  // console.log(email);
+
+  const user = await usersService.getProfileInfo(email);
+
+  res.status(200).json({ user });
+};
+
+module.exports = { createUser, loginUser, getProfileInfo };

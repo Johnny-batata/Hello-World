@@ -61,7 +61,7 @@ const validateToken = async (req, res, next) => {
           userId: decoded.payload.userId,
       };
         req.user = userWithoutPassword;
-        console.log(req.user, 'decoded', decoded);
+        // console.log(req.user, 'decoded', decoded);
 
         next();
 } catch (err) {

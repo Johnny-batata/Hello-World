@@ -16,35 +16,55 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-// app.get('/teste', async (req, res) => {
-// res.status(200).send({ message: 'funfou' });
-// });
 const fetchCategories = async (id) => { 
   try {
-    const response = await axios.get(`https://kitsu.io/api/edge/anime/${id}/relationships/categories`);
+    const response = await axios
+    .get(`https://kitsu.io/api/edge/anime/${id}/relationships/categories`);
    return response.data.data;
     } catch (err) {
       console.log(err);
     }
   };
-  
-app.get('/animesCategorys/:offset/:categoryId/:status', userMiddlewares.validateToken, animes.getAnimesByCategorys);
-app.post('/signup', userMiddlewares.validateIfExists, users.createUser);
-app.post('/login', userMiddlewares.validateLogin, users.loginUser);
-app.get('/animesStatus/:offset/:status', userMiddlewares.validateToken, animes.getAnimesByStatus);
-app.get('/categorys/:offset', userMiddlewares.validateToken, animes.getAnimesCategorys);
 
+  const fetchEpisodes = async (id) => {
+    try {
+      const response = await axios
+      .get(`https://kitsu.io/api/edge/anime/${id}/relationships/episodes`);
+      return response.data.data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
+  app.get(
+    '/animesCategorys/:offset/:categoryId/:status', 
+    userMiddlewares.validateToken, animes.getAnimesByCategorys,
+);
+  app.post('/signup', userMiddlewares.validateIfExists, users.createUser);
+  app.post('/login', userMiddlewares.validateLogin, users.loginUser);
+  app.get('/animesStatus/:offset/:status', userMiddlewares.validateToken, animes.getAnimesByStatus);
+  app.get('/categorys/:offset', userMiddlewares.validateToken, animes.getAnimesCategorys);
+  app.post('/profile', userMiddlewares.validateToken, users.getProfileInfo);
+  app.post('/animes/:offset', userMiddlewares.validateToken, animes.getAllAnimes);
+  
 const updateAnimes = async (identification) => {
   const db = await mongoConnectionAnimes();
 
-  const categories = await fetchCategories(identification);
+  // const categories = await fetchCategories(identification);
 
-  const updatedData = await db.collection('animes').updateOne({ id: identification }, {
-    $set: { categoriasId: categories },    
+  // const updatedData = await db.collection('animes').updateOne({ id: identification }, {
+  //   $set: { categoriasId: categories },    
+  // }); 
+  const episodes = await fetchEpisodes(identification);
+  if (!episodes) return;
+  const episodesLength = await episodes.length - 1;
+    const updatedData = await db.collection('animes').updateOne({ id: identification }, {
+    $set: { totalEpisodes: episodesLength + 1 },    
   }); 
 
   console.log(
-     identification,
+     identification, 
+     episodesLength + 1,
 );
 
 const updateResponse = await updatedData;
@@ -52,25 +72,27 @@ const updateResponse = await updatedData;
 };
 
 app.get('/testes', async (req, res) => {
-// 17039;
 try {
+  // 17086
 (async () => {
-  for (let i = 14601; i <= 17039; i += 1) {
+  // 17086
+  for (let i = 8800; i <= 17086; i += 1) {
   await updateAnimes(i.toString());
-      // console.log(i);
 }
 })();
 } catch (err) {
-  console.log(err);
+  console.log(err.message);
 }
-// const message db.collection('animes').sort({ id: 1 }).limit(5)
 
-  return res.status(200).json({ message: 'funfou' });
+// const episodes = await fetchEpisodes(1);
+// console.log(((episodes.length - 1) + 1));
+   res.status(200).json({ message: 'funfou' });
 });
 
 const fetchAnimes = async (number) => {
   try {
-  const response = await axios.get(`https://kitsu.io/api/edge/categories?page[limit]=20&page[offset]=${number}`);
+  const response = await axios
+  .get(`https://kitsu.io/api/edge/categories?page[limit]=20&page[offset]=${number}`);
  const data = await response.data.data;
  console.log(number);
  const db = await mongoConnectionAnimes();
@@ -92,7 +114,7 @@ app.get('/teste', async (req, res) => {
       await fetchAnimes(i);
           // console.log(i);
     }
-    })();
+  })();
     } catch (err) {
       console.log(err);
     }

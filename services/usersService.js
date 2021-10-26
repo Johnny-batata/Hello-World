@@ -34,4 +34,18 @@ const loginUser = async (email, password) => {
 return userMail;
 };
 
-module.exports = { createUser, loginUser };
+const getProfileInfo = async (email) => {
+  const userMail = await usersModel.findUserbyEmail(email);
+  // console.log(userMail, email, 'getprofile');
+  const { _id, name, nickname } = userMail;
+  const userWithoutPassword = {
+   _id,
+   name, 
+   nickname,
+   email,
+   
+  };
+return userWithoutPassword;
+};
+
+module.exports = { createUser, loginUser, getProfileInfo };
