@@ -21,4 +21,15 @@ const getAllAnimes = async (offset, filter) => {
   return animes;
 };
 
-module.exports = { getAnimesByStatus, getAnimesCategorys, getAnimesByCategorys, getAllAnimes };
+const getAllMovies = async (offset, filter) => {
+  const animes = await animesModel.getAllMovies(offset, `attributes.${filter}`);
+  return animes;
+};
+
+module.exports = { 
+  getAnimesByStatus, 
+  getAnimesCategorys,
+  getAnimesByCategorys,
+  getAllAnimes,
+  getAllMovies, 
+};

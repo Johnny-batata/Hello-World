@@ -46,6 +46,7 @@ const fetchCategories = async (id) => {
   app.get('/categorys/:offset', userMiddlewares.validateToken, animes.getAnimesCategorys);
   app.post('/profile', userMiddlewares.validateToken, users.getProfileInfo);
   app.post('/animes/:offset', userMiddlewares.validateToken, animes.getAllAnimes);
+  app.post('/movies/:offset', userMiddlewares.validateToken, animes.getAllMovies);
   
 const updateAnimes = async (identification) => {
   const db = await mongoConnectionAnimes();
