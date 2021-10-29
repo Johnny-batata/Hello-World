@@ -26,10 +26,16 @@ const getAllMovies = async (offset, filter) => {
   return animes;
 };
 
+const getAnimeById = async (id) => {
+  const animes = await animesModel.getAnimeById(id);
+  return animes;
+};
+
 module.exports = { 
   getAnimesByStatus, 
   getAnimesCategorys,
   getAnimesByCategorys,
   getAllAnimes,
   getAllMovies, 
+  getAnimeById,
 };

@@ -33,10 +33,18 @@ const getAllMovies = async (req, res) => {
   return res.status(200).json({ data: animes.response, totalLength: animes.responseLength });
 };
 
+const getAnimeById = async (req, res) => {
+  const { id } = req.params;
+
+  const animes = await animesService.getAnimeById(id);
+  return res.status(200).json({ data: animes });
+};
+
 module.exports = { 
   getAnimesByStatus, 
   getAnimesCategorys,
   getAnimesByCategorys,
   getAllAnimes, 
   getAllMovies,
+  getAnimeById,
 };

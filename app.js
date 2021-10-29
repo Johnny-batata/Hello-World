@@ -45,6 +45,7 @@ const fetchCategories = async (id) => {
   app.get('/animesStatus/:offset/:status', userMiddlewares.validateToken, animes.getAnimesByStatus);
   app.get('/categorys/:offset', userMiddlewares.validateToken, animes.getAnimesCategorys);
   app.post('/profile', userMiddlewares.validateToken, users.getProfileInfo);
+  app.post('/animesid/:id', userMiddlewares.validateToken, animes.getAnimeById);
   app.post('/animes/:offset', userMiddlewares.validateToken, animes.getAllAnimes);
   app.post('/movies/:offset', userMiddlewares.validateToken, animes.getAllMovies);
   
@@ -55,21 +56,32 @@ const updateAnimes = async (identification) => {
 
   // const updatedData = await db.collection('animes').updateOne({ id: identification }, {
   //   $set: { categoriasId: categories },    
+  // }); /
+  const data = await db.collection('animes').find({ $and: [{
+    'attributes.subtype': { $eq: 'movie' } }, { 'attributes.averageRating': { $ne: null } }, 
+    ] }).limit(1).skip(Number(identification));
+    const teste = await data.map((el) => el.id);
+     const categories = await fetchCategories(data.id);
+  
+  // const episodes = await fetchEpisodes(identification);
+  // if (!episodes) return;
+  // const episodesLength = await episodes.length - 1;
+  //   const updatedData = await db.collection('animes').updateOne({ id: identification }, {
+  //   $set: { totalEpisodes: episodesLength + 1 },    
   // }); 
-  const episodes = await fetchEpisodes(identification);
-  if (!episodes) return;
-  const episodesLength = await episodes.length - 1;
-    const updatedData = await db.collection('animes').updateOne({ id: identification }, {
-    $set: { totalEpisodes: episodesLength + 1 },    
-  }); 
 
   console.log(
-     identification, 
-     episodesLength + 1,
-);
+     identification,
+     data,
+     data.id,
+     teste,
+     categories,
+    //  episodesLength + 1,
+  );
+    return data;
 
-const updateResponse = await updatedData;
-  return updateResponse;
+// const updateResponse = await updatedData;
+  // return updateResponse;
 };
 
 app.get('/testes', async (req, res) => {
@@ -77,7 +89,9 @@ try {
   // 17086
 (async () => {
   // 17086
-  for (let i = 8800; i <= 17086; i += 1) {
+  // for (let i = 8800; i <= 17086; i += 1) {
+  // for (let i = 1; i <= 42; i += 1) {
+  for (let i = 1; i <= 1; i += 1) {
   await updateAnimes(i.toString());
 }
 })();
