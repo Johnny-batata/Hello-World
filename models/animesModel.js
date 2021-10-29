@@ -119,7 +119,7 @@ const getAllMovies = async (offset, filter = 'attributes.totalMediaCount') => {
 
 const getAnimeById = async (id) => {
   const db = await mongoConnectionAnimes();
-  const response = await db.collection('animes').find({ id });
+  const response = await db.collection('animes').findOne({ id });
     return response;
 };
 
